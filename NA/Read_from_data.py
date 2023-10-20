@@ -70,8 +70,7 @@ def show_bond_orientational_order_metrics(system):
     voro.compute(system)
     voro.plot()
     for k in [ 2, 3, 4, 5, 6, 7, 8]:
-    #for k in [6]:
-    #for k in [0, 1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15,16,17,18]:
+
         psi = freud.order.Hexatic(k=k, weighted=False)
         psi.compute(system, neighbors=voro.nlist.filter_r(9))
         order = np.absolute(psi.particle_order)
@@ -98,8 +97,7 @@ def count_orientational_order_metrics(system):
     voro.compute(system)
     bond_order_list  = []
     for k in [2, 3, 4, 5, 6, 7, 8]:
-    #for k in [6]:
-    #for k in [ 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15,16,17,18]:
+
         psi = freud.order.Hexatic(k=k,weighted=False)
         psi.compute(system, neighbors=voro.nlist.filter_r(9))
         order = np.absolute(psi.particle_order)
@@ -113,8 +111,7 @@ def show_bond_orientational_order_metrics(system):
     voro.compute(system)
     voro.plot()
     for k in [ 2, 3, 4, 5, 6, 7, 8]:
-    #for k in [6]:
-    #for k in [0, 1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15,16,17,18]:
+   
         psi = freud.order.Hexatic(k=k, weighted=False)
         psi.compute(system, neighbors=voro.nlist.filter_r(9))
         order = np.absolute(psi.particle_order)
@@ -138,6 +135,7 @@ def RDF_calc_1frame(Position_table, Box_length, dr, n):
   '''
   input: location information of partcles at 1 frame, number of atoms, thickness of shell (dr), number density
   output: RDF value for a single frame
+  Modified Allen & Tildesky's code
   ''' 
   # dr =   thickness of shell
   # n  =   number of atoms
@@ -162,7 +160,7 @@ def RDF_calc_1frame(Position_table, Box_length, dr, n):
   
   rho  = float(n) # Our calculation is done in box=1 units
   #h_id = ( 4/3 * np.pi * rho ) * ( edges[1:n_k+1]**3 - edges[0:n_k]**3 ) # Ideal number #3D
-  h_id = ( 2 * np.pi * rho ) * ( edges[1:n_k+1]**2 - edges[0:n_k]**2 )#2d
+  h_id = (np.pi * rho ) * ( edges[1:n_k+1]**2 - edges[0:n_k]**2 )#2d #2d 2D so the particle number in the shell = pi*r^2 *global density, assuming particle distributes uniformly
   g    = h / h_id / n # Average number
   edges = edges*Box_length                       # Convert bin edges back to sigma=1 units
   r_mid = 0.5*(edges[0:n_k]+edges[1:n_k+1]) # Mid points of bins
@@ -229,6 +227,9 @@ def angle_between_vectors(a, b):
     return  angle
 
 def Angle_calc_1frame(Position_table, Box_length, atomid, typeid, molid, cutoff, hist_width = 6, neighbor_style="Is_cutoff"):
+    '''
+    extract angular distribution
+    '''
     r = Position_table 
     r /= Box_length #convert r to box unit
     cutoff /= Box_length #convert cutoff to box unit
@@ -263,6 +264,9 @@ def Angle_calc_1frame(Position_table, Box_length, atomid, typeid, molid, cutoff,
     return angle_distribution
 
 def NN_dist(x, tol=0.01):
+        '''
+        extract nearest neighbor data
+        '''
         angle_full_list = []
         index_list = np.arange(len(x)) # Initialize a index list
         # Calculate the pairwise distance
